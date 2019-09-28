@@ -1,0 +1,7 @@
+*.dll
+*.pyd
+/wrModels/
+*.pyc
+*.lib
+*.exe
+/__pycache__/
