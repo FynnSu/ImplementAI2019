@@ -10,7 +10,7 @@ import numpy as np
 import os
 
 REFERENCE_JOINTS = [14, 15]
-DIFFERENCE_THRESHOLD = 1.5
+DIFFERENCE_THRESHOLD = 15
 SPECIAL_KEYS = {"left":Key.left, "right":Key.right, "up":Key.up, "down":Key.down, "space":Key.space}
 
 
@@ -39,7 +39,7 @@ def get_pose():
             visualizer.show()
 
         key = cv2.waitKey(1)
-        # print(key)aaa
+        # print(key)
 
         if key & 255 == 27:
             break
@@ -62,15 +62,15 @@ def difference(old_joints, new_joints, imp_joints):
     new_diff = []
     # comparison of differences from head location x and y coordinates
     for joint in imp_joints:
-        old_diff.append(old_joints[joint] - old_joints[8])
-        old_diff.append(old_joints[joint + 1] - old_joints[8])
-        new_diff.append(new_joints[joint] - new_joints[8])
-        new_diff.append(new_joints[joint + 1] - new_joints[8])
+        old_diff.append(old_joints[2*joint] - old_joints[8])
+        old_diff.append(old_joints[2*joint + 1] - old_joints[8])
+        new_diff.append(new_joints[2*joint] - new_joints[8])
+        new_diff.append(new_joints[2*joint + 1] - new_joints[8])
     Diff_Score = 0
 
     for index, coordinate_diff in enumerate(new_diff):
-        if not (0.83*old_diff[index]) < coordinate_diff < (1.17*old_diff[index]):
-            Diff_Score += coordinate_diff**2
+        if not (0.85*old_diff[index]) < coordinate_diff < (1.15*old_diff[index]):
+            Diff_Score += coordinate_diff*10
 
     return Diff_Score
 
