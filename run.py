@@ -9,10 +9,10 @@ from pynput.keyboard import Key, Controller
 import numpy as np
 import os
 
-REFERENCE_JOINTS = [14,15]
-DIFFERENCE_THRESHOLD = 0.1
-
+REFERENCE_JOINTS = [14, 15]
+DIFFERENCE_THRESHOLD = 1.5
 SPECIAL_KEYS = {"left":Key.left, "right":Key.right, "up":Key.up, "down":Key.down, "space":Key.space}
+
 
 def get_pose():
     print('Opening webcam...')
@@ -39,7 +39,7 @@ def get_pose():
             visualizer.show()
 
         key = cv2.waitKey(1)
-        # print(key)
+        # print(key)aaa
 
         if key & 255 == 27:
             break
@@ -48,16 +48,32 @@ def get_pose():
     cv2.destroyAllWindows()
     return joints
 
+
 def do_action(keyboard, key):
     if key in SPECIAL_KEYS.keys():
         keyboard.press(SPECIAL_KEYS[key])
     else:
         keyboard.press(key)
 
+
 def difference(old_joints, new_joints, imp_joints):
-    diff = np.subtract(old_joints, new_joints)
-    squared = np.square(diff)
-    return np.sum(squared[np.repeat(imp_joints, 2) + np.repeat((0,1), len(imp_joints))])
+    # diff = np.zeros(len(imp_joints))
+    old_diff = []
+    new_diff = []
+    # comparison of differences from head location x and y coordinates
+    for joint in imp_joints:
+        old_diff.append(old_joints[joint] - old_joints[8])
+        old_diff.append(old_joints[joint + 1] - old_joints[8])
+        new_diff.append(new_joints[joint] - new_joints[8])
+        new_diff.append(new_joints[joint + 1] - new_joints[8])
+    Diff_Score = 0
+
+    for index, coordinate_diff in enumerate(new_diff):
+        if not (0.83*old_diff[index]) < coordinate_diff < (1.17*old_diff[index]):
+            Diff_Score += coordinate_diff**2
+
+    return Diff_Score
+
 
 num_args = len(sys.argv)
 if num_args < 3 or num_args > 4:
@@ -121,10 +137,10 @@ while True:
                 key, indices, joints_pos = saved_actions[i]
                 # print(key, indices, joints_pos)
                 error = difference(joints_pos, joints, indices)
-                print(error)
-                if error < DIFFERENCE_THRESHOLD:
+                print(abs(error))
+                if abs(error) > DIFFERENCE_THRESHOLD:
                     do_action(keyboard, key)
-                    
+
         visualizer.show()
     key = cv2.waitKey(1)
 
@@ -133,8 +149,3 @@ while True:
 
 cap.release()
 cv2.destroyAllWindows()
-        
-
-
-
-
