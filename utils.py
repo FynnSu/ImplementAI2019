@@ -36,17 +36,17 @@ def get_pose(joint_numbers, webcam_index, estimator, visualizer, bone_pairs, opt
             humans2d = estimator.humans_2d()
 
             visualizer.draw_image(frame)
+            if len(humans2d) > 0:
+                human = humans2d[find_largest(humans2d)]
+                joints = human.joints()
 
-            human = humans2d[find_largest(humans2d)]
-            joints = human.joints()
-
-            other_numbers = []
-            for x in range(int(len(joints) / 2)):
-                if x not in joint_numbers:
-                    other_numbers.append(x)
-            visualizer.draw_points(get_joints(joints, other_numbers))
-            visualizer.draw_lines(joints, bone_pairs)
-            visualizer.draw_points(get_joints(joints, joint_numbers), colour=(127.0,255.0,0.0))
+                other_numbers = []
+                for x in range(int(len(joints) / 2)):
+                    if x not in joint_numbers:
+                        other_numbers.append(x)
+                visualizer.draw_points(get_joints(joints, other_numbers))
+                visualizer.draw_lines(joints, bone_pairs)
+                visualizer.draw_points(get_joints(joints, joint_numbers), colour=(127.0,255.0,0.0))
 
             visualizer.show()
 
