@@ -21,7 +21,7 @@ class frame_start ( wx.Frame ):
 		
 		self.SetSizeHintsSz( wx.DefaultSize, wx.DefaultSize )
 		
-		sbSizer3 = wx.StaticBoxSizer( wx.StaticBox( self, wx.ID_ANY, u"starting_box" ), wx.VERTICAL )
+		sbSizer3 = wx.StaticBoxSizer( wx.StaticBox( self, wx.ID_ANY, u"Start" ), wx.VERTICAL )
 		
 		sbSizer3.SetMinSize( wx.Size( 200,200 ) ) 
 		self.starting_text = wx.StaticText( sbSizer3.GetStaticBox(), wx.ID_ANY, u"Do you want to record an action?", wx.Point( 100,-1 ), wx.DefaultSize, wx.ALIGN_CENTRE )
@@ -64,7 +64,7 @@ class frame_erase ( wx.Frame ):
 		
 		self.SetSizeHintsSz( wx.DefaultSize, wx.DefaultSize )
 		
-		sbSizer3 = wx.StaticBoxSizer( wx.StaticBox( self, wx.ID_ANY, u"starting_box" ), wx.VERTICAL )
+		sbSizer3 = wx.StaticBoxSizer( wx.StaticBox( self, wx.ID_ANY, wx.EmptyString ), wx.VERTICAL )
 		
 		sbSizer3.SetMinSize( wx.Size( 200,200 ) ) 
 		self.erase_text = wx.StaticText( sbSizer3.GetStaticBox(), wx.ID_ANY, u"There are already files recorded, do you want to delete these?", wx.Point( 100,-1 ), wx.DefaultSize, wx.ALIGN_CENTRE )
@@ -194,6 +194,102 @@ class frame_body ( wx.Frame ):
 	
 	# Virtual event handlers, overide them in your derived class
 	def runanalysis( self, event ):
+		event.Skip()
+	
+
+###########################################################################
+## Class frame_key
+###########################################################################
+
+class frame_key ( wx.Frame ):
+	
+	def __init__( self, parent ):
+		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = wx.EmptyString, pos = wx.DefaultPosition, size = wx.Size( 500,300 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
+		
+		self.SetSizeHintsSz( wx.DefaultSize, wx.DefaultSize )
+		
+		sbSizer3 = wx.StaticBoxSizer( wx.StaticBox( self, wx.ID_ANY, wx.EmptyString ), wx.VERTICAL )
+		
+		sbSizer3.SetMinSize( wx.Size( 200,200 ) ) 
+		self.key_text = wx.StaticText( sbSizer3.GetStaticBox(), wx.ID_ANY, u"Enter a key or \"left\", \"right\", \"up\", \"down\", \"space\":", wx.Point( 100,-1 ), wx.DefaultSize, wx.ALIGN_CENTRE )
+		self.key_text.Wrap( -1 )
+		sbSizer3.Add( self.key_text, 0, wx.ALL|wx.EXPAND, 5 )
+		
+		self.key_input = wx.TextCtrl( sbSizer3.GetStaticBox(), wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		sbSizer3.Add( self.key_input, 0, wx.ALL, 5 )
+		
+		self.button_start = wx.Button( sbSizer3.GetStaticBox(), wx.ID_ANY, u"Record", wx.DefaultPosition, wx.DefaultSize, 0 )
+		sbSizer3.Add( self.button_start, 0, wx.ALIGN_CENTER|wx.ALL|wx.EXPAND, 5 )
+		
+		
+		self.SetSizer( sbSizer3 )
+		self.Layout()
+		
+		self.Centre( wx.BOTH )
+		
+		# Connect Events
+		self.button_start.Bind( wx.EVT_BUTTON, self.recordKey )
+		self.button_start.Bind( wx.EVT_LEAVE_WINDOW, self.button_startOnLeaveWindow )
+	
+	def __del__( self ):
+		pass
+	
+	
+	# Virtual event handlers, overide them in your derived class
+	def recordKey( self, event ):
+		event.Skip()
+	
+	def button_startOnLeaveWindow( self, event ):
+		event.Skip()
+	
+
+###########################################################################
+## Class frame_confirm
+###########################################################################
+
+class frame_confirm ( wx.Frame ):
+	
+	def __init__( self, parent ):
+		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = wx.EmptyString, pos = wx.DefaultPosition, size = wx.Size( 500,300 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
+		
+		self.SetSizeHintsSz( wx.DefaultSize, wx.DefaultSize )
+		
+		sbSizer3 = wx.StaticBoxSizer( wx.StaticBox( self, wx.ID_ANY, wx.EmptyString ), wx.VERTICAL )
+		
+		sbSizer3.SetMinSize( wx.Size( 200,200 ) ) 
+		self.confirm_text = wx.StaticText( sbSizer3.GetStaticBox(), wx.ID_ANY, u"Do you really want to record that?", wx.Point( 100,-1 ), wx.DefaultSize, wx.ALIGN_CENTRE )
+		self.confirm_text.Wrap( -1 )
+		sbSizer3.Add( self.confirm_text, 0, wx.ALL|wx.EXPAND, 5 )
+		
+		self.button_confirm_yes = wx.Button( sbSizer3.GetStaticBox(), wx.ID_ANY, u"Yes", wx.DefaultPosition, wx.DefaultSize, 0 )
+		sbSizer3.Add( self.button_confirm_yes, 0, wx.ALIGN_CENTER|wx.ALL|wx.EXPAND, 5 )
+		
+		self.button_confirm_not = wx.Button( sbSizer3.GetStaticBox(), wx.ID_ANY, u"No", wx.DefaultPosition, wx.DefaultSize, 0 )
+		sbSizer3.Add( self.button_confirm_not, 0, wx.ALL|wx.EXPAND, 5 )
+		
+		
+		self.SetSizer( sbSizer3 )
+		self.Layout()
+		
+		self.Centre( wx.BOTH )
+		
+		# Connect Events
+		self.button_confirm_yes.Bind( wx.EVT_BUTTON, self.confirmYes )
+		self.button_confirm_yes.Bind( wx.EVT_LEAVE_WINDOW, self.button_startOnLeaveWindow )
+		self.button_confirm_not.Bind( wx.EVT_BUTTON, self.confirmNo )
+	
+	def __del__( self ):
+		pass
+	
+	
+	# Virtual event handlers, overide them in your derived class
+	def confirmYes( self, event ):
+		event.Skip()
+	
+	def button_startOnLeaveWindow( self, event ):
+		event.Skip()
+	
+	def confirmNo( self, event ):
 		event.Skip()
 	
 
