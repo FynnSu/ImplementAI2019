@@ -8,79 +8,17 @@ from visualizer import Visualizer
 from pynput.keyboard import Key, Controller
 import numpy as np
 import os
+from utils import do_action, find_largest, get_joints, normalize, difference
 
-REFERENCE_JOINTS = [14, 15]
-DIFFERENCE_THRESHOLD = 1.5
-SPECIAL_KEYS = {"left":Key.left, "right":Key.right, "up":Key.up, "down":Key.down, "space":Key.space}
+DIFFERENCE_THRESHOLD = 0.75
 
-
-def get_pose():
-    print('Opening webcam...')
-    cap = cv2.VideoCapture(webcam_index)
-
-    if not cap.isOpened():
-        sys.exit('Cannot open webcam.')
-
-    for i in range(10):
-
-        ret, frame = cap.read()
-
-        if frame is not None:
-            estimator.process_frame(frame, options)
-            humans2d = estimator.humans_2d()
-
-            visualizer.draw_image(frame)
-            for human in humans2d:
-                joints = human.joints()
-
-                visualizer.draw_points(joints)
-                visualizer.draw_lines(joints, bone_pairs)
-
-            visualizer.show()
-
-        key = cv2.waitKey(1)
-        # print(key)aaa
-
-        if key & 255 == 27:
-            break
-
-    cap.release()
-    cv2.destroyAllWindows()
-    return joints
-
-
-def do_action(keyboard, key):
-    if key in SPECIAL_KEYS.keys():
-        keyboard.press(SPECIAL_KEYS[key])
-    else:
-        keyboard.press(key)
-
-
-def difference(old_joints, new_joints, imp_joints):
-    # diff = np.zeros(len(imp_joints))
-    old_diff = []
-    new_diff = []
-    # comparison of differences from head location x and y coordinates
-    for joint in imp_joints:
-        old_diff.append(old_joints[joint] - old_joints[8])
-        old_diff.append(old_joints[joint + 1] - old_joints[8])
-        new_diff.append(new_joints[joint] - new_joints[8])
-        new_diff.append(new_joints[joint + 1] - new_joints[8])
-    Diff_Score = 0
-
-    for index, coordinate_diff in enumerate(new_diff):
-        if not (0.83*old_diff[index]) < coordinate_diff < (1.17*old_diff[index]):
-            Diff_Score += coordinate_diff**2
-
-    return Diff_Score
-
-
+print('Start')
 num_args = len(sys.argv)
-if num_args < 3 or num_args > 4:
+if num_args < 4 or num_args > 5:
     sys.exit("Usage: python run.py MODEL_DIR/ ACTION_FILE camera_index")
 
-if num_args == 4:
-    webcam_index = int(sys.argv[3])
+if num_args == 5:
+    webcam_index = int(sys.argv[4])
 else:
     webcam_index = 0
 
@@ -117,6 +55,8 @@ with open(sys.argv[2], 'rb') as f:
 
 keyboard = Controller()
 
+run_last = [False] * len(saved_actions)
+
 while True:
     ret, frame = cap.read()
 
@@ -126,22 +66,27 @@ while True:
         visualizer.draw_image(frame)
 
         # Check for main person
-        for human in humans2d:
+        if len(humans2d) > 0:
+            human = humans2d[find_largest(humans2d)]
             joints = human.joints()
             visualizer.draw_points(joints)
             visualizer.draw_lines(joints, bone_pairs)
 
-            joints = joints - np.tile(joints[REFERENCE_JOINTS], int(len(joints) / 2))
+            norm_joints = normalize(joints)
 
             for i in range(len(saved_actions)):
                 key, indices, joints_pos = saved_actions[i]
                 # print(key, indices, joints_pos)
-                error = difference(joints_pos, joints, indices)
-                print(abs(error))
-                if abs(error) > DIFFERENCE_THRESHOLD:
-                    do_action(keyboard, key)
+                error = difference(joints_pos, norm_joints, indices)
+                print(key, error)
+                if abs(error) < DIFFERENCE_THRESHOLD:
+                    if (sys.argv[3] in ["-r", "-R"]) or (not run_last[i]):
+                        do_action(keyboard, key)
+                        run_last[i] = True
+                else:
+                    run_last[i] = False
 
-        visualizer.show()
+            visualizer.show()
     key = cv2.waitKey(1)
 
     if key & 255 == 27:

@@ -7,45 +7,9 @@ import pickle
 import os
 from visualizer import Visualizer
 from prettytable import from_csv
+from matplotlib import pyplot as plt
+from utils import get_joints, get_pose
 import numpy as np
-
-REFERENCE_JOINTS = [14,15]
-
-def get_pose():
-    print('Opening webcam...')
-    cap = cv2.VideoCapture(webcam_index)
-
-    if not cap.isOpened():
-        sys.exit('Cannot open webcam.')
-
-    for i in range(10):
-
-        ret, frame = cap.read()
-
-        if frame is not None:
-            estimator.process_frame(frame, options)
-            humans2d = estimator.humans_2d()
-
-            visualizer.draw_image(frame)
-            for human in humans2d:
-                joints = human.joints()
-
-                visualizer.draw_points(joints)
-                visualizer.draw_lines(joints, bone_pairs)
-
-            visualizer.show()
-
-        key = cv2.waitKey(1)
-        # print(key)
-
-        if key & 255 == 27:
-            break
-
-    cap.release()
-    cv2.destroyAllWindows()
-    joints = joints - np.tile(joints[REFERENCE_JOINTS], int(len(joints) / 2))
-    return joints
-
 
 num_args = len(sys.argv)
 if num_args < 3 or num_args > 4:
@@ -97,10 +61,25 @@ while True:
     bodyparts = input("Please enter the ID number of what you will move (separated by space):")
     bodyparts = list(map(int, bodyparts))
 
-    joints = get_pose()
+    redo = "yes"
+    while redo in ['yes', 'y']:
+        joints = get_pose(bodyparts, webcam_index, estimator, visualizer, bone_pairs, options)
+
+        visualizer.draw_lines(joints, bone_pairs)
+        visualizer.draw_points(get_joints(joints, bodyparts), colour=(127.0,255.0,0.0))
+        visualizer.show()
+
+        redo = input("Redo snapshot? (yes/y)")
+
     
     action = input('Enter a key or "left", "right", "up", "down", "space"')
-    actions.append([action, bodyparts, joints])
+
+    add = input("Would you like to add the action \""+ action + "\" with joints " + str(bodyparts) + " to the list of actions? (yes/y)")
+    
+    cv2.destroyAllWindows()
+
+    if add in ['yes','y']:
+        actions.append([action, bodyparts, joints])
 
     if input("Would you like to create a new action? (yes/y)") not in ['yes', 'y']:
         break

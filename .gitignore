@@ -5,3 +5,4 @@
 *.lib
 *.exe
 /__pycache__/
+/.vscode/
