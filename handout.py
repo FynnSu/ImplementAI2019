@@ -78,6 +78,7 @@ while True:
 
 
     key = cv2.waitKey(1)
+    print(key)
 
     if key & 255 == 27:
         break
