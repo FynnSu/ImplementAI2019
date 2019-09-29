@@ -83,6 +83,7 @@ actions = []
 
 if os.path.isfile(sys.argv[2]):
     with open(sys.argv[2], 'rb') as f:
+        # look into properties of picked later
         saved_actions = pickle.load(f)
 
     if input('Would you like to keep the ' + str(len(saved_actions)) + ' existing actions: (yes/y)') in ['yes', 'y']:
