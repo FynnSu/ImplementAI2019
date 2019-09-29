@@ -8,12 +8,12 @@ Created on Sat Sep 28 20:34:04 2019
 import wx 
   
 #import the newly created GUI file 
-import noname  
+import gui_frame  
 
 # About the window for new action
-class startframe(noname.frame_start): 
+class startframe(gui_frame.frame_start): 
    def __init__(self,parent):
-       noname.frame_start.__init__(self,parent)  
+       gui_frame.frame_start.__init__(self,parent)  
 		
    def getout(self,event):
        if 1 < 2: ##############LOOK IF FILES TO ERASE
@@ -23,9 +23,9 @@ class startframe(noname.frame_start):
        nextWindow.Show()
        self.Close()
        
-class eraseframe(noname.frame_erase):
+class eraseframe(gui_frame.frame_erase):
     def __init__(self,parent):
-       noname.frame_erase.__init__(self,parent)
+       gui_frame.frame_erase.__init__(self,parent)
     
     def erasefiles(self, event):
         #############ADD ERASER!
@@ -38,9 +38,9 @@ class eraseframe(noname.frame_erase):
         nextWindow.Show()
         self.Close()
 
-class bodyframe(noname.frame_body):
+class bodyframe(gui_frame.frame_body):
     def __init__(self,parent):
-       noname.frame_body.__init__(self,parent)
+       gui_frame.frame_body.__init__(self,parent)
        
     def runanalysis(self, event):
         body_list =[]
