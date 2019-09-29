@@ -10,8 +10,6 @@ import numpy as np
 import os
 from utils import do_action, find_largest, get_joints, normalize, difference
 
-DIFFERENCE_THRESHOLD = 0.75
-
 print('Start')
 num_args = len(sys.argv)
 if num_args < 4 or num_args > 5:
