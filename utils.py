@@ -27,7 +27,7 @@ def get_pose(joint_numbers, webcam_index, estimator, visualizer, bone_pairs, opt
     if not cap.isOpened():
         sys.exit('Cannot open webcam.')
 
-    for i in range(10):
+    for _ in range(10):
 
         ret, frame = cap.read()
 
@@ -74,26 +74,12 @@ def get_joints(joints, indices):
 
     
 def difference(old_joints, new_joints, imp_joints):
-    # # diff = np.zeros(len(imp_joints))
-    # old_diff = []
-    # new_diff = []
-    # # comparison of differences from head location x and y coordinates
-    # for joint in imp_joints:
-    #     old_diff.append(old_joints[joint] - old_joints[8])
-    #     old_diff.append(old_joints[joint + 1] - old_joints[8])
-    #     new_diff.append(new_joints[joint] - new_joints[8])
-    #     new_diff.append(new_joints[joint + 1] - new_joints[8])
-    # Diff_Score = 0
-    # for index, coordinate_diff in enumerate(new_diff):
-    #     if not (0.83*old_diff[index]) < coordinate_diff < (1.17*old_diff[index]):
-    #         Diff_Score += coordinate_diff**2
-    # return Diff_Score
-    # print(type(old_joints), type(new_joints))
     sub = old_joints - new_joints
     diff = get_joints(sub, imp_joints)
     return np.sqrt(np.sum(np.square(diff)))
 
 def do_action(keyboard, key):
+    # visualizer.draw_text_in_frame(key.upper(), 100, 100, font_scale=5)
     if key in SPECIAL_KEYS.keys():
         keyboard.press(SPECIAL_KEYS[key])
     else:

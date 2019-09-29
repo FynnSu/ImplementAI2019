@@ -10,6 +10,8 @@ import numpy as np
 import os
 from utils import do_action, find_largest, get_joints, normalize, difference
 
+DIFFERENCE_THRESHOLD = 0.75
+
 print('Start')
 num_args = len(sys.argv)
 if num_args < 4 or num_args > 5:
@@ -77,7 +79,9 @@ while True:
                 # print(key, indices, joints_pos)
                 error = difference(joints_pos, norm_joints, indices)
                 print(key, error)
-                if abs(error) < DIFFERENCE_THRESHOLD:
+                if error < DIFFERENCE_THRESHOLD:
+                    print("ACTION: " + key.upper())
+                    visualizer.draw_text_in_frame(key.upper(), 50,50, font_scale=1.5)
                     if (sys.argv[3] in ["-r", "-R"]) or (not run_last[i]):
                         do_action(keyboard, key)
                         run_last[i] = True
