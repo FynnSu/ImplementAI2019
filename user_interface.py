@@ -16,4 +16,4 @@ print("Welcome to our \"Move to Action Recorder\"!")
 
 print(body_table)
 bodyparts = input("Please enter the ID number of what you will move (separated by space):")
-bodyparts = list(map(int, bodyparts.split()))
+bodyparts = list(map(int, bodyparts.split(',')))
